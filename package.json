@@ -1,0 +1,17 @@
+{
+  "name": "entrega1",
+  "version": "1.0.0",
+  "description": "",
+  "main": "server-express.js",
+  "type": "module",
+  "scripts": {
+    "dev": "node --watch server-express.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "keywords": [],
+  "dependencies": {
+    "express": "^5.2.1",
+    "uuid": "^13.0.0"
+  }
+}

@@ -1,0 +1,13 @@
+[
+  {
+    "id": "41c5a94f-9fcf-4b49-a2d5-b603246cf0a1",
+    "status": true,
+    "title": "Café Espresso",
+    "description": "Café intenso y aromático",
+    "code": "ESP01",
+    "price": 1800,
+    "stock": 15,
+    "category": "bebida",
+    "thumbnails": []
+  }
+]
