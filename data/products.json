@@ -9,5 +9,11 @@
     "stock": 15,
     "category": "bebida",
     "thumbnails": []
+  },
+  {
+    "id": "27364969-fedd-4779-8536-51bc2acbb8c8",
+    "status": true,
+    "title": "Frapuccion",
+    "price": 2000
   }
 ]
