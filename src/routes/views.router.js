@@ -5,41 +5,49 @@ import { CartModel } from "../models/cart.model.js";
 const router = Router();
 
 router.get("/", async (req, res) => {
-  const { page = 1, limit = 10, sort, query } = req.query;
+  try {
+    const { page = 1, limit = 10, sort, query } = req.query;
 
-  let filter = {};
-  if (query) {
-    if (query === "true" || query === "false") {
-      filter.status = query === "true";
-    } else {
-      filter.category = query;
+    let filter = {};
+    if (query) {
+      if (query === "true" || query === "false") {
+        filter.status = query === "true";
+      } else {
+        filter.category = query;
+      }
     }
+
+    let sortOption = {};
+    if (sort === "asc") sortOption.price = 1;
+    if (sort === "desc") sortOption.price = -1;
+
+    const result = await ProductModel.paginate(filter, {
+      page: parseInt(page),
+      limit: parseInt(limit),
+      sort: sortOption,
+      lean: true,
+    });
+
+    res.render("home", {
+      products: result.docs,
+      hasPrevPage: result.hasPrevPage,
+      hasNextPage: result.hasNextPage,
+      prevPage: result.prevPage,
+      nextPage: result.nextPage,
+      page: result.page,
+    });
+  } catch (error) {
+    res.status(500).json({ status: "error", message: error.message });
   }
-
-  let sortOption = {};
-  if (sort === "asc") sortOption.price = 1;
-  if (sort === "desc") sortOption.price = -1;
-
-  const result = await ProductModel.paginate(filter, {
-    page: parseInt(page),
-    limit: parseInt(limit),
-    sort: sortOption,
-    lean: true,
-  });
-
-  res.render("home", {
-    products: result.docs,
-    hasPrevPage: result.hasPrevPage,
-    hasNextPage: result.hasNextPage,
-    prevPage: result.prevPage,
-    nextPage: result.nextPage,
-    page: result.page,
-  });
 });
 
 router.get("/products/:pid", async (req, res) => {
-  const product = await ProductModel.findById(req.params.pid).lean();
-  res.render("productDetail", { product });
+  try {
+    const product = await ProductModel.findById(req.params.pid).lean();
+    res.render("productDetail", { product });
+  } catch (error) {
+    res.status(500).json({ status: "error", message: error.message });
+  }
 });
 
 router.get("/carts/:cid", async (req, res) => {

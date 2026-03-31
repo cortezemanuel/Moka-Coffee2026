@@ -1,5 +1,6 @@
 import express from "express";
 import mongoose from "mongoose";
+import dotenv from "dotenv";
 import { engine } from "express-handlebars";
 import { createServer } from "http";
 import { Server } from "socket.io";
@@ -8,6 +9,8 @@ import productsRouter from "./src/routes/products.router.js";
 import cartsRouter from "./src/routes/carts.router.js";
 import viewsRouter from "./src/routes/views.router.js";
 import { ProductModel } from "./src/models/product.model.js";
+
+dotenv.config();
 
 const app = express();
 const httpServer = createServer(app);
@@ -21,25 +24,45 @@ app.engine("handlebars", engine());
 app.set("view engine", "handlebars");
 app.set("views", "./src/views");
 
-mongoose.connect(
-  "mongodb+srv://cortezemanuel7_db_user:WFV0YICyb9j4JZsk@cluster0.9pa2ltp.mongodb.net/mokacoffee",
-);
+mongoose
+  .connect(process.env.MONGO_URI)
+  .then(() => console.log("Mongo conectado"))
+  .catch((err) => console.error(err));
 
 app.use("/api/products", productsRouter);
 app.use("/api/carts", cartsRouter);
 app.use("/", viewsRouter);
 
 io.on("connection", async (socket) => {
-  const products = await ProductModel.find().lean();
-  socket.emit("updateProducts", products);
+  try {
+    const products = await ProductModel.find().lean();
+    socket.emit("updateProducts", products);
+  } catch (error) {
+    console.error(error);
+  }
 
   socket.on("newProduct", async (product) => {
-    await ProductModel.create(product);
-    const products = await ProductModel.find().lean();
-    io.emit("updateProducts", products);
+    try {
+      await ProductModel.create(product);
+      const products = await ProductModel.find().lean();
+      io.emit("updateProducts", products);
+    } catch (error) {
+      console.error(error);
+    }
   });
 });
 
-httpServer.listen(8080, () => {
-  console.log("Server running on port 8080");
+app.use((err, req, res, next) => {
+  res.status(500).json({
+    status: "error",
+    message: "Error interno del servidor",
+  });
 });
+
+const PORT = process.env.PORT || 8080;
+
+httpServer.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
+});
+
+console.log(process.env.MONGO_URI);
