@@ -58,7 +58,13 @@ router.get("/carts/:cid", async (req, res) => {
 
     if (!cart) return res.status(404).send("Carrito no encontrado");
 
-    res.render("cartDetail", { cart });
+    const total = cart.products.reduce((acc, item) => {
+      const price = Number(item.product?.price) || 0;
+      const quantity = Number(item.quantity) || 0;
+      return acc + price * quantity;
+    }, 0);
+
+    res.render("cartDetail", { cart, total });
   } catch (error) {
     res.status(400).send("ID de carrito inválido");
   }

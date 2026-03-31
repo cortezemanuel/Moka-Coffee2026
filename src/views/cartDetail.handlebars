@@ -9,15 +9,7 @@
   {{/each}}
 </ul>
 
-<p>
-  Total: $
-  {{#let total=0}}
-    {{#each cart.products}}
-      {{#set total=(add total (multiply this.quantity this.product.price))}}{{/set}}
-    {{/each}}
-    {{total}}
-  {{/let}}
-</p>
+<p>Total: ${{total}}</p>
 
 <button onclick="clearCart('{{cart._id}}')">Vaciar carrito</button>
 
@@ -33,4 +25,7 @@ async function clearCart(cid) {
   alert("Carrito vaciado");
   location.reload();
 }
+
+
 </script>
+
